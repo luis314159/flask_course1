@@ -1,4 +1,4 @@
-from flask import Flask, request, redirect, make_response
+from flask import Flask, request, redirect, make_response, render_template
 
 app = Flask(__name__)
 
@@ -6,8 +6,7 @@ app = Flask(__name__)
 def index():
     user_ip = request.cookies.get('user_ip')
 
-    user_agent = request.headers.get('User-Agent')
-    return '<p>Your browser is %s</p>' % user_agent
+    return render_template('index.html', user_ip = user_ip)
 
 @app.route('/bad_request')
 def bad_request():
