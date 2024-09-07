@@ -11,5 +11,10 @@
     {% else %}
     <a href ="{{ url_for('ip_request')}}">Ir a inicio</a>
     {% endif %}
+    <ul>
+        {% for todo in todo %}
+            <li>todo<li>
+        {% endfor %}
+    </ul>
 </body>
 </html>

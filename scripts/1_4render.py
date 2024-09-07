@@ -2,11 +2,16 @@ from flask import Flask, request, redirect, make_response, render_template
 
 app = Flask(__name__)
 
+todo_list = ['todo1', 'todo2', 'todo3']
+
 @app.route('/')
 def index():
     user_ip = request.cookies.get('user_ip')
-
-    return render_template('index.html', user_ip = user_ip)
+    context = {
+       'user_ip': user_ip,
+       'todo_list' : todo_list 
+    }
+    return render_template('index.html', **context)
 
 @app.route('/bad_request')
 def bad_request():
