@@ -3,27 +3,32 @@ from flask_bootstrap import Bootstrap
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField
 from wtforms.validators import DataRequired, Length
+import unittest 
 
-app = Flask(__name__)
+from app import create_app
+from app.forms import LoginForm
 
-bootstrap = Bootstrap(app)
-
-#moment = Moment(app)
+app = create_app()
 
 todo_list = ['Comprar cafe', 'Entrenar', 'Study']
 
 app.config['SECRET_KEY'] = 'SUPER_SECRETEO'
 
 
-class loginForm(FlaskForm):
-    user_name= StringField('What is your user name?', validators=[DataRequired(), Length(min=3, max=20)])
-    password = PasswordField('Password', validators=[DataRequired()])
-    submit = SubmitField('login')
+@app.cli.command()
+def test():
+    tests = unittest.TestLoader().discover('tests')
+    unittest.TextTestRunner().run(tests)
+
+@app.route('/')
+def home():   
+    return redirect(url_for('index'))
+
 
 @app.route('/index', methods = ['GET', 'POST'])
 def index():
     user_ip = session.get('user_ip')
-    login_form = loginForm()
+    login_form = LoginForm()
     user_name = session.get('user_name')
 
     context = {
@@ -36,7 +41,7 @@ def index():
        user_name = login_form.user_name.data
        session['user_name'] = user_name
        flash('Nombre de usuario registrado con éxito')
-       return redirect(url_for('index'))
+       return redirect(url_for('home'))
        
     return render_template('index.html', **context)
 
