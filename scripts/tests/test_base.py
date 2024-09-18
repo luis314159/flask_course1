@@ -5,7 +5,7 @@ from main import app
 class MainTest(TestCase):
     def create_app(self):
         app.config['TESTING'] = True
-        app.config['WTF_CSRF_ENABLE'] = False
+        app.config['WTF_CSRF_ENABLED'] = False
         return app
     
     #verificar la aplicación
@@ -25,17 +25,12 @@ class MainTest(TestCase):
     #verificar respuesta 200
     def test_index_get(self):
         response = self.client.get(url_for('index'))
-
         self.assert200(response)
     
     #verificar post
     def test_index_post(self):
-        fake_form = {
-            'user_name': 'fake',
-            'password': 'fake-password'
-        }
-        response = self.client.post(url_for('index'), data = fake_form)
-        self.assert200(response)
+        response = self.client.post(url_for('index'))
+        self.assertTrue(response.status_code, 405)
 
     def test_auth_plueprint_exits(self):
         self.assertIn('auth', self.app.blueprints)
@@ -44,8 +39,20 @@ class MainTest(TestCase):
         response = self.client.get(url_for('auth.login'))
 
         self.assert200(response)
-        
+
     def test_auth_login_template(self):
         self.client.get(url_for('auth.login'))
 
         self.assertTemplateUsed('login.html')
+
+    def test_auth_login_post(self):
+        fake_form = {
+            'user_name': 'fake',
+            'password': 'fake-password',
+            'csrf_token': ''
+        }
+
+        response = self.client.post(url_for('auth.login'), data=fake_form)
+    
+        # Normaliza la comparación quitando el dominio y comparando solo la parte relativa
+        self.assertEqual(response.location.split('//')[-1], url_for('index'))

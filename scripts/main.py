@@ -25,7 +25,7 @@ def home():
     return redirect(url_for('index'))
 
 
-@app.route('/index', methods = ['GET', 'POST'])
+@app.route('/index', methods = ['GET'])
 def index():
     user_ip = session.get('user_ip')
     login_form = LoginForm()
